@@ -1,0 +1,43 @@
+name: Publish latest release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  relsease-latest:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Delete old latest release
+        run: |
+          RELEASE_ID=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/tags/latest" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" | jq '.id')
+          if [ "$RELEASE_ID" != "null" ]; then
+            curl -X DELETE "https://api.github.com/repos/$GITHUB_REPOSITORY/releases/$RELEASE_ID" \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+          fi
+
+      - name: Delete old latest tag
+        run: |
+          TAG_ID=$(curl --silent "https://api.github.com/repos/$GITHUB_REPOSITORY/git/refs/tags/latest" \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" | jq '.id')
+          if [ "$TAG_ID" != "null" ]; then
+            curl -X DELETE "https://api.github.com/repos/$GITHUB_REPOSITORY/git/refs/tags/latest" \
+              -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}"
+          fi
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: latest
+          release_name: latest
+          draft: false
+          prerelease: true
