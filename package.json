@@ -24,6 +24,7 @@
     "build": "unbuild",
     "dev": "vitest dev",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "prepack": "pnpm run build",
     "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
     "test": "pnpm lint && pnpm test:types && vitest run --coverage",
