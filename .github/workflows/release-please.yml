@@ -8,7 +8,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
     steps:
       - name: Generate release notes
         id: release
@@ -16,3 +17,23 @@ jobs:
         with:
           token: ${{ secrets.PAT }}
           release-type: node
+
+  publish:
+    needs: release
+    runs-on: ubuntu-latest
+    if: needs.release.outputs.release_created == 'true'
+    steps:
+      - uses: actions/checkout@v4
+      - run: corepack enable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm build
+      - name: Publish to GitHub packages
+        run: pnpm release
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
