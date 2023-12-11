@@ -1,5 +1,5 @@
 {
-  "name": "synco-room",
+  "name": "@gnugomez/synco-room",
   "type": "module",
   "version": "0.0.0",
   "packageManager": "pnpm@8.11.0",
@@ -20,13 +20,16 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "scripts": {
     "build": "unbuild",
     "dev": "vitest dev",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "prepack": "pnpm run build",
-    "release": "pnpm test && changelogen --release && npm publish && git push --follow-tags",
+    "release": "pnpm test && npm publish --access public",
     "test": "pnpm lint && pnpm test:types && vitest run --coverage",
     "test:types": "tsc --noEmit --skipLibCheck"
   },
@@ -39,7 +42,6 @@
     "@antfu/eslint-config": "^2.4.4",
     "@types/node": "^20.10.3",
     "@vitest/coverage-v8": "^1.0.1",
-    "changelogen": "^0.5.5",
     "eslint": "^8.55.0",
     "eslint-plugin-format": "^0.1.0",
     "jiti": "^1.21.0",
