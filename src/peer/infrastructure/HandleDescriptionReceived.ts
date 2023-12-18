@@ -1,10 +1,10 @@
 import consola from 'consola'
 import DescriptionEvent from '../domain/DescriptionEvent'
 import { PeerConnectionActions } from '../domain/PeerConnectionActions'
-import type PeerConnectionWebRTC from './PeerConnectionWebRtc'
+import type PeerConnectionWebRtc from './PeerConnectionWebRtc'
 
 export async function handleDescriptionReceived(
-  peer: PeerConnectionWebRTC,
+  peer: PeerConnectionWebRtc,
   peerDescriptionEvent: DescriptionEvent,
   peerConnection: RTCPeerConnection,
 ) {

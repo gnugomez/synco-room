@@ -1,13 +1,10 @@
+import type { Observable } from 'rxjs'
 import { BehaviorSubject, ReplaySubject, merge, switchMap } from 'rxjs'
 import { consola } from 'consola'
-import type PeerFactory from '../../peer/application/PeerFactory'
 import type SignalingChannel from '../../signaling/domain/SignalingChannel'
-import type PeerConnection from '../../peer/domain/PeerConnection'
+import { InitPeerConnectionEvent, PeerConnectionActions, PeerIdentifier } from '../../peer'
+import type { Peer, PeerConnectionEvent, PeerFactory } from '../../peer'
 import SignalingMessage from '../../signaling/domain/SignalingMessage'
-import PeerIdentifier from '../../peer/domain/PeerIdentifier'
-import InitPeerConnectionEvent from '../../peer/domain/InitPeerConnectionEvent'
-import { PeerConnectionActions } from '../../peer/domain/PeerConnectionActions'
-import type PeerConnectionEvent from '../../peer/domain/PeerConnectionEvent'
 import PeerMessage from '../../peer/domain/PeerMessage'
 import JoinRoomEvent from './JoinRoomEvent'
 import type RoomEvent from './RoomEvent'
@@ -17,7 +14,7 @@ import VideoPlayingMessage from './VideoPlayingMessage'
 
 export default class Room {
   readonly dataStream = new ReplaySubject<PeerMessage<RoomEvent>>()
-  readonly peerConnections = new BehaviorSubject<PeerConnection[]>([])
+  readonly peerConnections = new BehaviorSubject<Peer[]>([])
   readonly peerId: PeerIdentifier
 
   constructor(
@@ -26,7 +23,7 @@ export default class Room {
     private signalingChannel: SignalingChannel,
   ) {
     consola.debug(`Starting room with id: ${id}`)
-    this.peerId = new PeerIdentifier(Math.random().toString(36).slice(7))
+    this.peerId = PeerIdentifier.create(Math.random().toString(36).slice(7))
 
     this.sendJoinRoomEvent()
 
@@ -36,8 +33,8 @@ export default class Room {
 
     this.peerConnections
       .pipe(
-        switchMap((connections: PeerConnection[]) =>
-          merge(...connections.map(connection => connection.messages)),
+        switchMap((connections: Peer[]) =>
+          merge(...connections.map(connection => connection.messages as Observable<PeerMessage<RoomEvent>>)),
         ),
       )
       .subscribe(this.dataStream)
@@ -147,7 +144,6 @@ export default class Room {
           this.peerId,
           joinRoomEvent.peerIdentifier,
           true,
-          this.signalingChannel,
         ),
       ])
 
@@ -173,7 +169,6 @@ export default class Room {
           this.peerId,
           originatedPeerIdentifier,
           false,
-          this.signalingChannel,
         ),
       ])
     }

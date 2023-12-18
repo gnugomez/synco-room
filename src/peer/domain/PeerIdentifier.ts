@@ -1,5 +1,9 @@
 export default class PeerIdentifier {
-  constructor(readonly id: string) {}
+  private constructor(readonly id: string) {}
+
+  static create = (id: string) => {
+    return new PeerIdentifier(id)
+  }
 
   static areEqual = (
     peerIdentifier1: PeerIdentifier,

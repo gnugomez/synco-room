@@ -1,22 +1,23 @@
-import type PeerConnection from '../domain/PeerConnection'
+import type Peer from '../domain/Peer'
 import type PeerFactory from '../application/PeerFactory'
 import type PeerIdentifier from '../domain/PeerIdentifier'
 import type SignalingChannel from '../../signaling/domain/SignalingChannel'
 import { PEER_TO_PEER_CONFIG } from './PeerConstants'
-import PeerConnectionWebRTC from './PeerConnectionWebRtc'
+import PeerConnectionWebRtc from './PeerConnectionWebRtc'
 
 export default class RTCPeerFactory implements PeerFactory {
+  constructor(private readonly signalingChannel: SignalingChannel) {}
+
   createPeerConnection(
     selfPeerId: PeerIdentifier,
     targetPeerId: PeerIdentifier,
     polite: boolean,
-    signalingChannel: SignalingChannel,
-  ): PeerConnection {
-    return new PeerConnectionWebRTC(
+  ): Peer {
+    return new PeerConnectionWebRtc(
       selfPeerId,
       targetPeerId,
       polite,
-      signalingChannel,
+      this.signalingChannel,
       PEER_TO_PEER_CONFIG,
     )
   }

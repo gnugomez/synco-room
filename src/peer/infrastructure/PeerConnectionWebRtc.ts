@@ -8,7 +8,7 @@ import {
 } from 'rxjs'
 import type SignalingChannel from '../../signaling/domain/SignalingChannel'
 import SignalingMessage from '../../signaling/domain/SignalingMessage'
-import type PeerConnection from '../domain/PeerConnection'
+import type Peer from '../domain/Peer'
 import type { PeerConnectionState } from '../domain/PeerConnectionState'
 import type { SignalingState } from '../../signaling/domain/SignalingState'
 import PeerIdentifier from '../domain/PeerIdentifier'
@@ -23,7 +23,7 @@ import { publishIceCandidateToTargetPeer } from './PublishIceCandidateToTargetPe
 import { handleDescriptionReceived } from './HandleDescriptionReceived'
 import { loadIceCandidate } from './loadIceCandidate'
 
-export default class PeerConnectionWebRTC implements PeerConnection {
+export default class PeerConnectionWebRtc implements Peer {
   readonly peerConnection: RTCPeerConnection
   private dataChannel?: RTCDataChannel
   public ignoreOffer = false
